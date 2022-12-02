@@ -1,0 +1,3 @@
+[default]
+ghc src/1.hs -outputdir out -o out/aoc
+out/aoc
