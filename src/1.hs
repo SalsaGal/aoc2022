@@ -6,4 +6,6 @@ main = do
     print sums
 
 handle_input :: [Int] -> String -> [Int]
-handle_input acc line = if line == "" then acc ++ [0] else (init acc) ++ [(last acc) + read line]
+handle_input acc line =
+    if line == "" then acc ++ [0]
+    else (init acc) ++ [(last acc) + read line]
