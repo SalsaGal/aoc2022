@@ -6,23 +6,23 @@ main = do
     print scores
     print (sum scores)
 
-move_to_line :: String -> [String]
+move_to_line :: String -> [Char]
 move_to_line move = [
         (
             case move !! 0 of
-                'A' -> "R"
-                'B' -> "P"
-                'C' -> "S"
+                'A' -> 'R'
+                'B' -> 'P'
+                'C' -> 'S'
         ),
         (
             case move !! 2 of
-                'X' -> "R"
-                'Y' -> "P"
-                'Z' -> "S"
+                'X' -> 'R'
+                'Y' -> 'P'
+                'Z' -> 'S'
         )
     ]
 
-score :: [String] -> Int
+score :: [Char] -> Int
 score moves = 1 + move_index (last moves) + round_score (map move_index moves)
 
 round_score :: [Int] -> Int
@@ -31,7 +31,7 @@ round_score [a, b] =
     else if a == b then 3
     else 0
 
-move_index :: String -> Int
-move_index "R" = 0
-move_index "P" = 1
-move_index "S" = 2
+move_index :: Char -> Int
+move_index 'R' = 0
+move_index 'P' = 1
+move_index 'S' = 2
