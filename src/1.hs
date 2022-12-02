@@ -3,7 +3,7 @@ main = do
     input <- readFile "input/1.txt"
     let input_split = lines input
     let sums = foldl handle_input [0] input_split
-    print sums
+    print (maximum sums)
 
 handle_input :: [Int] -> String -> [Int]
 handle_input acc line =
