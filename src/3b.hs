@@ -3,9 +3,11 @@ import Data.Char
 main :: IO ()
 main = do
     file_contents <- readFile "input/3.txt"
-    let compartments = get_compartments (lines file_contents)
-    let overlaps = foldl (\x acc -> acc ++ x) [] (map rm_dup (map get_overlap compartments))
-    let priority_sum = sum (map get_priority overlaps)
+    let compartments = lines file_contents
+    let groups = chunk 3 compartments
+    let badges = map (\[a, b, c] -> get_overlap (get_overlap (a, b), c)) groups
+    let folded = foldl (\x acc -> acc ++ x) [] (map rm_dup badges)
+    let priority_sum = sum (map get_priority folded)
     print priority_sum
 
 get_compartments :: [String] -> [(String, String)]
@@ -23,3 +25,7 @@ rm_dup :: Eq a => [a] -> [a]
 rm_dup [] = []
 rm_dup (x:xs)   | elem x xs = rm_dup xs
                 | otherwise = x : rm_dup xs
+
+chunk :: Int -> [a] -> [[a]]
+chunk _ [] = []
+chunk size list = [take size list] ++ chunk size (drop size list)
