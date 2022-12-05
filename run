@@ -1,3 +1,3 @@
 [default]
-ghc src/4.hs -outputdir out -o out/aoc
+ghc src/5.hs -outputdir out -o out/aoc
 out/aoc
