@@ -16,7 +16,7 @@ chunks num input = [take num input] ++ chunks num (drop num input)
 
 parse_stacks :: [String] -> [String]
 parse_stacks rows = do
-    let lines = reverse (init (map (\x -> map (\y -> y !! 1) (chunks 4 x)) rows)) :: [String]
+    let lines = (init (map (\x -> map (\y -> y !! 1) (chunks 4 x)) rows)) :: [String]
     init (
             map (\x -> filter (\char -> char /= ' ') x) (
                 map (\index ->
