@@ -4,6 +4,7 @@ main = do
     let [stack_start, moves] = take 2 (split "" (lines input))
 
     let stacks = (parse_stacks stack_start) ++ map (\_ -> "") [0..30]
+    print stacks
     let final_moves = foldl (\acc x -> do_move acc x) stacks moves :: [String]
 
     print (map (\x -> if null x then ' ' else head x) final_moves)
@@ -36,14 +37,12 @@ do_move list move = do
 parse_stacks :: [String] -> [String]
 parse_stacks rows = do
     let lines = (init (map (\x -> map (\y -> y !! 1) (chunks 4 x)) rows)) :: [String]
-    init (
-            map (\x -> filter (\char -> char /= ' ') x) (
-                map (\index ->
-                    map (\x ->
-                        if index < length x
-                            then x !! index
-                            else ' '
-                    ) lines
-                ) [0..length lines]
-            )
+    map (\x -> filter (\char -> char /= ' ') x) (
+            map (\index ->
+                map (\x ->
+                    if index < length x
+                        then x !! index
+                        else ' '
+                ) lines
+            ) [0..length lines]
         )
