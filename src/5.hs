@@ -1,12 +1,12 @@
 main :: IO ()
 main = do
-    input <- readFile "input/5example.txt"
+    input <- readFile "input/5.txt"
     let [stack_start, moves] = take 2 (split "" (lines input))
 
-    let stacks = parse_stacks stack_start
-    let final_moves = foldl (\acc x -> do_move acc x) stacks moves
+    let stacks = (parse_stacks stack_start) ++ map (\_ -> "") [0..30]
+    let final_moves = foldl (\acc x -> do_move acc x) stacks moves :: [String]
 
-    print final_moves
+    print (map (\x -> if null x then ' ' else head x) final_moves)
 
 split :: Eq a => a -> [a] -> [[a]]
 split _ [] = []
@@ -23,7 +23,7 @@ chunks :: Int -> [a] -> [[a]]
 chunks _ [] = []
 chunks num input = [take num input] ++ chunks num (drop num input)
 
-do_move ::  [String] -> String -> [String]
+do_move :: [String] -> String -> [String]
 do_move list move = do
     let [_, count, _, src, _, dest] = split ' ' move
     let moved = reverse (take (read count) (list !! (read src - 1)))
