@@ -1,15 +1,20 @@
 main :: IO ()
 main = do
     input <- readFile "input/5example.txt"
-    let [stack_start, moves] = split "" (lines input)
+    let [stack_start, moves] = take 2 (split "" (lines input))
     print (parse_stacks stack_start)
     print (split ',' "foo,bar,baz")
 
 split :: Eq a => a -> [a] -> [[a]]
+split _ [] = []
 split delim list = do
-    let pos = fst (filter (\x -> snd x == delim) (zip [0..] list) !! 0)
-    let (a,b) = splitAt pos list
-    [a, tail b]
+    let delims = (filter (\x -> snd x == delim) (zip [0..] list))
+    if null delims
+        then [list]
+        else do
+            let pos = fst (head delims)
+            let (a,b) = splitAt pos list
+            [a] ++ split delim (tail b)
 
 chunks :: Int -> [a] -> [[a]]
 chunks _ [] = []
