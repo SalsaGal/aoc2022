@@ -4,8 +4,9 @@ main = do
     let [stack_start, moves] = take 2 (split "" (lines input))
 
     let stacks = parse_stacks stack_start
-    print stacks
-    print (do_move (head moves) stacks)
+    let final_moves = foldl (\acc x -> do_move acc x) stacks moves
+
+    print final_moves
 
 split :: Eq a => a -> [a] -> [[a]]
 split _ [] = []
@@ -22,10 +23,10 @@ chunks :: Int -> [a] -> [[a]]
 chunks _ [] = []
 chunks num input = [take num input] ++ chunks num (drop num input)
 
-do_move :: String -> [String] -> [String]
-do_move move list = do
+do_move ::  [String] -> String -> [String]
+do_move list move = do
     let [_, count, _, src, _, dest] = split ' ' move
-    let moved = reverse (take (read count) (list !! read dest))
+    let moved = reverse (take (read count) (list !! (read src - 1)))
     map (\(index, pile) ->
             if index == (read src) - 1 then drop (read count) pile
             else if index == (read dest) - 1 then moved ++ pile
