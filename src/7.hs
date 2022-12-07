@@ -1,9 +1,9 @@
 main :: IO ()
 main = do
-    input <- readFile "input/7example.txt"
+    input <- readFile "input/7.txt"
     let instructions = parse_instructions input
     let (fs, _) = foldl get_file ([], []) instructions :: ([Item], [String])
-    print (search_fs is_folder fs)
+    print (sum (filter (100000>) (map get_size (search_fs is_folder fs))))
 
 search_fs :: (Item -> Bool) -> [Item] -> [Item]
 search_fs pred fs = foldl (\result file -> do
