@@ -55,3 +55,11 @@ data Item =
     Folder { name :: String, files :: [Item]} |
     File { name :: String, size :: Int }
     deriving Show
+
+is_file :: Item -> Bool
+is_file File { name=_, size=_} = True
+is_file Folder { name=_, files=_} = False
+
+is_folder :: Item -> Bool
+is_folder File { name=_, size=_} = False
+is_folder Folder { name=_, files=_} = True
