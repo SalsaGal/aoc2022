@@ -3,8 +3,18 @@ main = do
     input <- readFile "input/7example.txt"
     let instructions = parse_instructions input
     let (fs, _) = foldl get_file ([], []) instructions :: ([Item], [String])
-    print fs
-    print (get_size (head (files (head fs))))
+    print (search_fs is_folder fs)
+
+search_fs :: (Item -> Bool) -> [Item] -> [Item]
+search_fs pred fs = foldl (\result file -> do
+        let children_adds = if is_folder file
+            then search_fs pred (files file)
+            else []
+        let inherent = if pred file
+            then result ++ [file]
+            else result
+        children_adds ++ inherent
+    ) [] fs
 
 get_size :: Item -> Int
 get_size item = case item of
