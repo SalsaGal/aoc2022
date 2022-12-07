@@ -2,12 +2,12 @@ main :: IO ()
 main = do
     input <- readFile "input/7example.txt"
     let instructions = parse_instructions input
-    let (file, pwd) = foldl get_file ([], []) instructions :: ([File], [String])
+    let (file, pwd) = foldl get_file ([], []) instructions :: ([Item], [String])
     print instructions
     print file
     print pwd
 
-get_file :: ([File], [String]) -> Instruction -> ([File], [String])
+get_file :: ([Item], [String]) -> Instruction -> ([Item], [String])
 get_file (files, pwd) instruction = case head (split ' ' (command instruction)) of
     "cd" -> do
         let target = (split ' ' (command instruction)) !! 1
@@ -16,7 +16,7 @@ get_file (files, pwd) instruction = case head (split ' ' (command instruction)) 
             _ -> (files, pwd ++ [target])
     "ls" -> (files, pwd)
 
-ls_to_file :: String -> File
+ls_to_file :: String -> Item
 ls_to_file line = do
     let tokens = split ' ' line
     case head tokens of
@@ -51,7 +51,7 @@ data Instruction = Instruction {
     outputs :: [String]
 } deriving Show
 
-data File =
-    Folder { name :: String, files :: [File]} |
+data Item =
+    Folder { name :: String, files :: [Item]} |
     File { name :: String, size :: Int }
     deriving Show
