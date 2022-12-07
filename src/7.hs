@@ -7,6 +7,18 @@ main = do
     print file
     print pwd
 
+    let files = [Folder {name="folder", files=[File {name="file.txt", size=512}]}]
+    print (is_path ["folder", "file.txt"] files)
+    print (is_path ["foder", "file.txt"] files)
+
+is_path :: [String] -> [Item] -> Bool
+is_path [] _ = True 
+is_path path file = do
+    let next = filter (\x -> head path == name x) file
+    if null next
+        then False
+        else is_path (tail path) (files (head next))
+
 get_file :: ([Item], [String]) -> Instruction -> ([Item], [String])
 get_file (files, pwd) instruction = case head (split ' ' (command instruction)) of
     "cd" -> do
