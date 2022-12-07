@@ -4,15 +4,12 @@ main = do
     let instructions = parse_instructions input
     let (fs, _) = foldl get_file ([], []) instructions :: ([Item], [String])
     print fs
-    print (sum_size (\file -> size file < 100000) fs)
+    print (get_size (head (files (head fs))))
 
-sum_size :: (Item -> Bool) -> [Item] -> Int
-sum_size _ [] = 0
-sum_size predicate fs = sum (map (\item -> do
-        case item of
-            File {name=_, size=_} -> if predicate item then size item else 0
-            Folder {name=_, files=_} -> sum_size predicate (files item)
-    ) fs)
+get_size :: Item -> Int
+get_size item = case item of
+    File {name=_, size=_} -> size item
+    Folder {name=_, files=_} -> sum (map get_size (files item))
 
 find_add :: [Item] -> [String] -> Item -> [Item]
 find_add fs path to_add = do
