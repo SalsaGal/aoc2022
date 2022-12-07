@@ -2,13 +2,13 @@ main :: IO ()
 main = do
     input <- readFile "input/7example.txt"
     let instructions = parse_instructions input
-    let (file, pwd) = foldl get_file ([], []) instructions :: ([Item], [String])
-    print file
+    let fs_info = foldl get_file ([], []) instructions :: ([Item], [String])
+    print (foldl get_file fs_info instructions)
 
-find_add :: Item -> [Item] -> [String] -> [Item]
-find_add to_add fs path = do
+find_add :: [Item] -> [String] -> Item -> [Item]
+find_add fs path to_add = do
     let is_correct_name x = head path == name x
-    if length fs == 1
+    if null fs
         then do
             map (\file -> if is_correct_name file
                     then Folder {name=name file, files=files file ++ [to_add]}
@@ -16,7 +16,7 @@ find_add to_add fs path = do
                 ) fs
         else do
             map (\file -> if is_correct_name file
-                    then Folder {name=name file, files=find_add to_add (files file) (tail path)}
+                    then Folder {name=name file, files=find_add (files file) (tail path) to_add}
                     else file
                 ) fs
 
@@ -26,10 +26,11 @@ get_file (files, pwd) instruction = case head (split ' ' (command instruction)) 
         let target = (split ' ' (command instruction)) !! 1
         case target of
             ".." -> (files, init pwd)
+            "/" -> (files, [])
             _ -> (files, pwd ++ [target])
     "ls" -> do
-        let new_files = outputs instruction
-        (files, pwd)
+        let new_files = map ls_to_file (outputs instruction)
+        (foldl (\fs new -> find_add fs pwd new) files new_files, pwd)
 
 ls_to_file :: String -> Item
 ls_to_file line = do
