@@ -8,14 +8,14 @@ main = do
 find_add :: [Item] -> [String] -> Item -> [Item]
 find_add fs path to_add = do
     let is_correct_name x = head path == name x
-    if null fs
+    if length path == 1
         then do
             map (\file -> if is_correct_name file
                     then Folder {name=name file, files=files file ++ [to_add]}
                     else file
                 ) fs
         else do
-            map (\file -> if is_correct_name file
+            map (\file -> if head path == name file
                     then Folder {name=name file, files=find_add (files file) (tail path) to_add}
                     else file
                 ) fs
@@ -26,7 +26,7 @@ get_file (files, pwd) instruction = case head (split ' ' (command instruction)) 
         let target = (split ' ' (command instruction)) !! 1
         case target of
             ".." -> (files, init pwd)
-            "/" -> (files, [])
+            "/" -> (files, pwd)
             _ -> (files, pwd ++ [target])
     "ls" -> do
         let new_files = map ls_to_file (outputs instruction)
