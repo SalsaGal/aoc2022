@@ -3,21 +3,22 @@ main = do
     input <- readFile "input/7example.txt"
     let instructions = parse_instructions input
     let (file, pwd) = foldl get_file ([], []) instructions :: ([Item], [String])
-    print instructions
     print file
-    print pwd
 
-    let files = [Folder {name="folder", files=[File {name="file.txt", size=512}]}]
-    print (is_path ["folder", "file.txt"] files)
-    print (is_path ["foder", "file.txt"] files)
-
-is_path :: [String] -> [Item] -> Bool
-is_path [] _ = True 
-is_path path file = do
-    let next = filter (\x -> head path == name x) file
-    if null next
-        then False
-        else is_path (tail path) (files (head next))
+find_add :: Item -> [Item] -> [String] -> [Item]
+find_add to_add fs path = do
+    let is_correct_name x = head path == name x
+    if length fs == 1
+        then do
+            map (\file -> if is_correct_name file
+                    then Folder {name=name file, files=files file ++ [to_add]}
+                    else file
+                ) fs
+        else do
+            map (\file -> if is_correct_name file
+                    then Folder {name=name file, files=find_add to_add (files file) (tail path)}
+                    else file
+                ) fs
 
 get_file :: ([Item], [String]) -> Instruction -> ([Item], [String])
 get_file (files, pwd) instruction = case head (split ' ' (command instruction)) of
@@ -26,7 +27,9 @@ get_file (files, pwd) instruction = case head (split ' ' (command instruction)) 
         case target of
             ".." -> (files, init pwd)
             _ -> (files, pwd ++ [target])
-    "ls" -> (files, pwd)
+    "ls" -> do
+        let new_files = outputs instruction
+        (files, pwd)
 
 ls_to_file :: String -> Item
 ls_to_file line = do
