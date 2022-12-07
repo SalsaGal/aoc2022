@@ -2,8 +2,17 @@ main :: IO ()
 main = do
     input <- readFile "input/7example.txt"
     let instructions = parse_instructions input
-    let fs_info = foldl get_file ([], []) instructions :: ([Item], [String])
-    print fs_info
+    let (fs, _) = foldl get_file ([], []) instructions :: ([Item], [String])
+    print fs
+    print (sum_size (\file -> size file < 100000) fs)
+
+sum_size :: (Item -> Bool) -> [Item] -> Int
+sum_size _ [] = 0
+sum_size predicate fs = sum (map (\item -> do
+        case item of
+            File {name=_, size=_} -> if predicate item then size item else 0
+            Folder {name=_, files=_} -> sum_size predicate (files item)
+    ) fs)
 
 find_add :: [Item] -> [String] -> Item -> [Item]
 find_add fs path to_add = do
