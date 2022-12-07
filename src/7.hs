@@ -3,6 +3,7 @@ main = do
     input <- readFile "input/7example.txt"
     let instructions = parse_instructions input
     let (file, pwd) = foldl get_file ([], []) instructions :: ([File], [String])
+    print instructions
     print file
     print pwd
 
@@ -13,7 +14,14 @@ get_file (files, pwd) instruction = case head (split ' ' (command instruction)) 
         case target of
             ".." -> (files, init pwd)
             _ -> (files, pwd ++ [target])
-    "ls" -> ([], pwd)
+    "ls" -> (files, pwd)
+
+ls_to_file :: String -> File
+ls_to_file line = do
+    let tokens = split ' ' line
+    case head tokens of
+        "dir" -> Folder {name=tokens !! 1, files=[]}
+        _ -> File {name=tokens !! 1, size=read (head tokens)}
 
 parse_instructions :: String -> [Instruction]
 parse_instructions input = foldl (\instructions line ->
