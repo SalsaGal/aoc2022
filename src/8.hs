@@ -4,7 +4,10 @@ main :: IO ()
 main = do
     input <- readFile "input/8example.txt"
     let tiles = map (\line -> map (\x -> read [x]) line) (lines input) :: Map
-    print (visible tiles (3, 1))
+    let visibilities = map (
+            \y -> map (\x -> visible tiles (x, y)) [0..length (head tiles) - 1]) [0..length tiles - 1]
+    let visibilities_flat = foldl (\acc list -> acc ++ list) [] visibilities
+    print (length (filter (True ==) visibilities_flat))
 
 visible :: Map -> (Int, Int) -> Bool
 visible tiles pos@(x, y) = do
