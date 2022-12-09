@@ -2,7 +2,7 @@ module Main where
 
 main :: IO ()
 main = do
-    input <- readFile "input/8example.txt"
+    input <- readFile "input/8.txt"
     let tiles = map (\line -> map (\x -> read [x]) line) (lines input) :: Map
     let visibilities = map (
             \y -> map (\x -> visible tiles (x, y)) [0..length (head tiles) - 1]) [0..length tiles - 1]
