@@ -4,15 +4,12 @@ main :: IO ()
 main = do
     input <- readFile "input/8example.txt"
     let tiles = map (\line -> map (\x -> read [x]) line) (lines input) :: Map
-    print (map_items tiles (1,1) Main.Left)
-    print (map_items tiles (1,1) Main.Right)
-    print (map_items tiles (1,1) Main.Up)
-    print (map_items tiles (1,1) Main.Down)
+    print (visible tiles (3, 1))
 
-invisible :: Map -> (Int, Int) -> Bool
-invisible tiles pos@(x, y) = do
-    let height = tiles !! y !! x :: Int
-    any (\lines -> any (height <=) lines) (map (map_items tiles pos) all_dirs)
+visible :: Map -> (Int, Int) -> Bool
+visible tiles pos@(x, y) = do
+    let height = tiles !! y !! x
+    any (True ==) (map (\direction -> all (height >) (map_items tiles pos direction)) all_dirs)
 
 -- Returns items to the [Direction] of the position
 map_items :: Map -> (Int, Int) -> Direction -> [Int]
