@@ -1,6 +1,6 @@
 main :: IO ()
 main = do
-    print (do_move default_map "2 R")
+    print (foldl do_move default_map ["2 R", "1 U"])
 
 data Map = Map {
     h :: (Int, Int),
@@ -11,9 +11,9 @@ data Map = Map {
 do_move :: Map -> String -> Map
 do_move tiles instruction = do
     let tokens = split ' ' instruction
-    let h = mul_pos (dir_pos (head (tokens !! 1))) (read (tokens !! 0))
+    let new_h = mul_pos (dir_pos (head (tokens !! 1))) (read (tokens !! 0))
     Map {
-        h=h,
+        h=add_pos new_h (h tiles),
         t=t tiles
     }
 
