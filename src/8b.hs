@@ -2,12 +2,28 @@ module Main where
 
 main :: IO ()
 main = do
-    input <- readFile "input/8.txt"
+    input <- readFile "input/8example.txt"
     let tiles = map (\line -> map (\x -> read [x]) line) (lines input) :: Map
-    let visibilities = map (
-            \y -> map (\x -> visible tiles (x, y)) [0..length (head tiles) - 1]) [0..length tiles - 1]
-    let visibilities_flat = foldl (\acc list -> acc ++ list) [] visibilities
-    print (length (filter (True ==) visibilities_flat))
+    let scores = map (
+                \y -> map (
+                    \x -> get_score tiles (x, y)
+                ) [0..length (head tiles) - 1]
+            ) [0..length tiles - 1]
+    let scores_flat = foldl (\acc list -> acc ++ list) [] scores
+    print scores_flat
+
+get_score :: Map -> (Int, Int) -> Int
+get_score tiles pos@(x, y) = do
+    let lines = map (map_items tiles pos) all_dirs
+    let height = tiles !! y !! x
+    foldl (\acc line -> acc * index_of_block height line) 1 lines
+
+index_of_block :: Int -> [Int] -> Int
+index_of_block height line = do
+    let set = filter (\(_, num) -> num >= height) (zip [0..] line)
+    if null set
+        then 0
+        else fst (head set)
 
 visible :: Map -> (Int, Int) -> Bool
 visible tiles pos@(x, y) = do
