@@ -1,6 +1,7 @@
 main :: IO ()
 main = do
-    print (foldl do_move default_map ["2 R", "1 U"])
+    instructions <- readFile "input/9example.txt"
+    print (foldl do_move default_map (lines instructions))
 
 data Map = Map {
     h :: (Int, Int),
@@ -11,14 +12,32 @@ data Map = Map {
 do_move :: Map -> String -> Map
 do_move tiles instruction = do
     let tokens = split ' ' instruction
-    let new_h = mul_pos (dir_pos (head (tokens !! 1))) (read (tokens !! 0))
-    Map {
+    let new_h = mul_pos (dir_pos (head (tokens !! 0))) (read (tokens !! 1))
+    do_tail_move Map {
         h=add_pos new_h (h tiles),
         t=t tiles
     }
 
+do_tail_move :: Map -> Map
+do_tail_move tiles = do
+    let difference = sub_pos (h tiles) (t tiles)
+    let x_diff = if fst difference > 1 then 1
+        else if fst difference < -1 then -1
+        else 0
+    let y_diff = if snd difference > 1 then 1
+        else if snd difference < -1 then -1
+        else 0
+
+    Map {
+        h=h tiles,
+        t=add_pos (x_diff, y_diff) (t tiles)
+    }
+
 add_pos :: (Int, Int) -> (Int, Int) -> (Int, Int)
 add_pos (a1, a2) (b1, b2) = (a1 + b1, a2 + b2)
+
+sub_pos :: (Int, Int) -> (Int, Int) -> (Int, Int)
+sub_pos (a1, a2) (b1, b2) = (a1 - b1, a2 - b2)
 
 mul_pos :: (Int, Int) -> Int -> (Int, Int)
 mul_pos (a1, a2) b = (a1 * b, a2 * b)
